@@ -90,7 +90,7 @@ const mutations = {
     },
     DELETE_STUDENT(state, id) {
         state.students = state.students.filter(s => {
-            return s.id != id;
+            return s.UserId != id;
         });
     },
     SET_SUCCESS_MESSAGE(state, msg) {

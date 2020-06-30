@@ -1,7 +1,16 @@
 <template>
   <v-container id="dashboard" fluid tag="section">
     <v-row>
-
+      <v-col cols="12" sm="6" lg="3">
+        <base-material-stats-card
+          color="info"
+          icon="mdi-account-lock"
+          title="Administrators"
+          :value="admins"
+          sub-icon="mdi-align-vertical-bottom"
+          sub-text="Total Users"
+        />
+      </v-col>
 
       <v-col cols="12" sm="6" lg="3">
         <base-material-stats-card
@@ -9,42 +18,30 @@
           icon="mdi-human-male-boy"
           title="Parents"
           :value="parents"
-          sub-icon="mdi-clock"
-          sub-text="Just Updated"
+          sub-icon="mdi-align-vertical-bottom"
+          sub-text="Total Users"
         />
       </v-col>
 
       <v-col cols="12" sm="6" lg="3">
         <base-material-stats-card
           color="primary"
-          icon="mdi-account"
+          icon="mdi-account-multiple"
           title="Students"
           :value="students"
-          sub-icon="mdi-tag"
-          sub-text="Tracked from Google Analytics"
+          sub-icon="mdi-align-vertical-bottom"
+          sub-text="Total Users"
         />
       </v-col>
 
       <v-col cols="12" sm="6" lg="3">
         <base-material-stats-card
           color="success"
-          icon="mdi-account-tie-voice"
-          title="Revenue"
-          value="$ 34,245"
-          sub-icon="mdi-calendar"
-          sub-text="Last 24 Hours"
-        />
-      </v-col>
-
-      <v-col cols="12" sm="6" lg="3">
-        <base-material-stats-card
-          color="orange"
-          icon="mdi-account"
-          title="Bookings"
-          value="2000"
-          sub-icon="mdi-alert"
-          sub-icon-color="red"
-          sub-text="Get More Space..."
+          icon="mdi-account-tie"
+          title="Teachers"
+          :value="teachers"
+          sub-icon="mdi-align-vertical-bottom"
+          sub-text="Total Users"
         />
       </v-col>
 
@@ -326,21 +323,32 @@ export default {
   },
 
   computed: {
+    admins() {
+      return this.$store.state.Admin.admins.length.toString();
+    },
     parents() {
-      return this.$store.state.Parent.parents.length.toString()
+      return this.$store.state.Parent.parents.length.toString();
     },
     students() {
-      return this.$store.state.Student.students.length.toString()
+      return this.$store.state.Student.students.length.toString();
+    },
+    teachers() {
+      return this.$store.state.Teacher.teachers.length.toString();
     }
   },
   created() {
-    this.$store.dispatch("Parent/getParents");
-    this.$store.dispatch("Student/getStudents");
+    this.getUsers();
   },
 
   methods: {
     complete(index) {
       this.list[index] = !this.list[index];
+    },
+    getUsers() {
+      this.$store.dispatch("Admin/getAdmins");
+      this.$store.dispatch("Parent/getParents");
+      this.$store.dispatch("Student/getStudents");
+      this.$store.dispatch("Teacher/getTeachers");
     }
   }
 };

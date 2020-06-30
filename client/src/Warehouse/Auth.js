@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from '../router'
 
 const state = {
     token: localStorage.getItem('token') || '',
@@ -24,17 +25,19 @@ const actions = {
 
             if (res.data.success) {
                 const token = res.data.token;
-                const user = res.data.user;
                 //Ruajtja e token ne localstorage
                 localStorage.setItem('token', token);
                 axios.defaults.headers.common['Authorization'] = token;
-                commit('AUTH_SUCCESS', token, user);
+                commit('AUTH_SUCCESS', token);
             }
 
             return res;
         }
         catch (err) {
-            commit('AUTH_ERROR', err);
+            commit('AUTH_ERROR', err.response.data.msg);
+            setTimeout(() => {
+                commit("AUTH_ERROR", null);
+            }, 3000);
         }
     },
 
@@ -48,26 +51,24 @@ const actions = {
         localStorage.removeItem('token');
         commit('LOGOUT');
         delete axios.defaults.headers.common['Authorization'];
-        this.$router.push('/login');
+        router.push('/login');
         return;
     },
 };
 
 const mutations = {
-    AUTH_SUCCESS(state, token, user) {
+    AUTH_SUCCESS(state, token) {
         state.token = token;
-        state.user = user;
         state.status = 'success';
         state.error_message = null;
     },
-    AUTH_ERROR(state, err) {
-        state.error_message = err.response.data.msg;
+    AUTH_ERROR(state, error) {
+        state.error_message = error;
     },
 
     LOGOUT(state) {
         state.error = null;
         state.token = '';
-        state.user = {};
         state.status = '';
     },
     USER_PROFILE(state, user) {

@@ -1,20 +1,25 @@
 const Teacher = require('../models').Teacher;
 const User = require('../models').User;
+const Classroom = require('../models').Classroom;
+const Feedback = require('../models').Feedback;
 
-
+const checkPermission = require('../permission');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const passport = require('passport');
-
-require('dotenv').config()
-const key = process.env.secret
-
 const upload = require('../uploader');
 
+const { Op } = require('sequelize');
 
 exports.create = [upload.single('photo_path'), async (req, res) => {
     try {
-        let { email, password, role, name, surname, address, phone, birthday, salary } = req.body;
+        checkPermission(req.user.role, 'ADMIN');
+
+        const emailExist = await User.findOne({ where: { email: req.body.email } });
+        if (emailExist) {
+            return res.status(400).json({ msg: 'This email already exists', success: false })
+        }
+
+        let { email, password, role, name, surname, address, phone, birthday, classroomId } = req.body;
 
         const user = {
             email,
@@ -28,26 +33,20 @@ exports.create = [upload.single('photo_path'), async (req, res) => {
             phone,
             birthday,
             photo_path: req.file.path,
-            salary
+            classroomId
         }
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(user.password, salt, async (err, hash) => {
-                if (err) { console.log(err); throw (err) }
-                try {
-                    user.password = hash;
-                    const registeredUser = await User.create(user)
+        const salt = await bcrypt.genSalt(10);
 
-                    const registeredTeacher = await registeredUser.createTeacher(teacher)
-                    return res.status(200).json({
-                        success: true,
-                        registeredTeacher: [registeredUser, registeredTeacher],
-                        msg: "Teacher is now registered"
-                    });
-                }
-                catch (err) {
-                    res.status(400).json({ msg: err, success: false })
-                }
-            });
+        const hashedPassword = await bcrypt.hash(user.password, salt);
+        user.password = hashedPassword;
+
+        const registeredUser = await User.create(user);
+        const registeredTeacher = await registeredUser.createTeacher(teacher);
+
+        return res.status(200).json({
+            success: true,
+            registeredTeacher: [registeredUser, registeredTeacher],
+            msg: "Teacher is now registered"
         });
     }
     catch (err) {
@@ -57,6 +56,7 @@ exports.create = [upload.single('photo_path'), async (req, res) => {
 
 exports.updateTeacher = async (req, res) => {
     try {
+        checkPermission(req.user.role, 'ADMIN');
         let { name, surname, address, phone, birthday, salary } = req.body;
 
         const updatedTeacher = await Teacher.update({
@@ -67,7 +67,12 @@ exports.updateTeacher = async (req, res) => {
             birthday,
             salary,
             include: [
-                { model: User }
+                {
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                }
             ]
         },
             { where: { id: req.params.id } }
@@ -85,7 +90,18 @@ exports.findOne = async (req, res) => {
         const teacher = await Teacher.findOne({
             where: { id: req.params.id },
             include: [
-                { model: User }
+                {
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                },
+                {
+                    model: Classroom
+                },
+                {
+                    model: Feedback
+                },
             ]
         });
         res.status(200).json({ teacher, success: true });
@@ -95,43 +111,6 @@ exports.findOne = async (req, res) => {
     }
 }
 
-exports.login = async (req, res) => {
-    let teacher = await Teacher.findOne({ where: { email: req.body.email } })
-    if (!teacher) {
-        return res.status(404).json({
-            msg: "Teacher not found",
-            success: false
-        });
-    }
-
-    //Nese ekziston user atehere i krahasojme passwords
-    bcrypt.compare(req.body.password, teacher.password).then(isMatch => {
-        if (isMatch) {
-            //User password eshte korrekt dhe dergojme JSON Token per ate user
-            const payload = {
-                id: teacher.id,
-                email: teacher.email,
-                role: teacher.role,
-            }
-            jwt.sign(payload, key, {
-                expiresIn: 604800
-            }, (err, token) => {
-                res.status(200).json({
-                    success: true,
-                    token: `Bearer ${token}`,
-                    user: teacher,
-                    msg: "You're now logged in"
-                });
-            })
-        }
-        else {
-            return res.status(404).json({
-                msg: "Incorrect password",
-                success: false
-            })
-        }
-    })
-}
 
 exports.findTeachers = async (req, res) => {
     try {
@@ -139,8 +118,16 @@ exports.findTeachers = async (req, res) => {
             include: [
                 {
                     model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
                 },
-                
+                {
+                    model: Classroom
+                },
+                {
+                    model: Feedback
+                }
             ]
         });
         res.status(200).json({ teachers, success: true });
@@ -152,9 +139,16 @@ exports.findTeachers = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
+        checkPermission(req.user.role, 'ADMIN');
+        const teacher = await Teacher.findOne({ where: { UserId: req.params.id } })
         const deletedUser = await User.destroy({
-            where: { id: req.params.id }
+            where: {
+                [Op.and]: [{ id: req.params.id }, { role: 'teacher' }]
+            },
         });
+        await fs.unlink(teacher.photo_path, err => {
+            if (err) throw err;
+        })
         res.status(200).json({ deletedUser, msg: 'Teacher has been deleted succesfully', success: true });
     }
 

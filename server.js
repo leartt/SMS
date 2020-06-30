@@ -17,10 +17,6 @@ app.use('/uploads', express.static('uploads'));
 app.use(passport.initialize());
 require('./passport')(passport);
 
-app.get('/', (req, res) => {
-    console.log(req.headers['authorization'])
-});
-
 
 const auth = require('./verifyAuth');
 
@@ -39,6 +35,15 @@ app.use('/student', auth, studentRoute);
 
 const teacherRoute = require('./routes/teacher');
 app.use('/teacher', auth, teacherRoute);
+
+const feedbackRoute = require('./routes/feedback');
+app.use('/feedback', auth, feedbackRoute);
+
+const classroomRoute = require('./routes/classroom');
+app.use('/classroom', auth, classroomRoute);
+
+
+require('./generatePdf');
 
 const PORT = process.env.PORT || 5000;
 

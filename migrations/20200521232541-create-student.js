@@ -55,7 +55,16 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
-      }
+      },
+      classroomId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Classrooms',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
     });
   },
   down: (queryInterface, Sequelize) => {

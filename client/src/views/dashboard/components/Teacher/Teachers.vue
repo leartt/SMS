@@ -5,15 +5,20 @@
     <v-card>
       <v-card-title class="my-3">
         <v-text-field v-model="search" label="Search" single-line hide-details></v-text-field>
-        <router-link to="/teachers/register">
+        <router-link v-if="userRole === 'admin'" to="/teachers/register">
           <v-btn color="green" class="mx-2">Register New Teacher</v-btn>
         </router-link>
       </v-card-title>
 
       <v-data-table :headers="headers" :items="teachers" :search="search">
-        <template v-slot:item.actions="{ item }">
+        <template v-if="userRole === 'admin'" v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="openEdit(item)">mdi-pencil</v-icon>
           <v-icon small class="mr-2" @click="openDelete(item)">mdi-delete</v-icon>
+        </template>
+        <template v-slot:item.avatars="{ item }">
+          <v-avatar>
+            <img :src="`http://localhost:5000/${item.photo_path}`" :alt="item.name" />
+          </v-avatar>
         </template>
       </v-data-table>
 
@@ -33,21 +38,33 @@
                   <v-text-field v-model="editedUser.surname" label="Surname" required></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field v-model="editedUser.email" label="E-mail" required></v-text-field>
+                  <v-text-field v-model="editedUser.User.email" label="E-mail" disabled></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="editedUser.password"
-                    type="password"
-                    label="Password"
-                    hint="At least 8 characters"
-                  ></v-text-field>
+                  <v-text-field v-model="editedUser.User.role" label="Role" disabled></v-text-field>
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
                   <v-text-field v-model="editedUser.address" label="Address" required></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="12">
-                  <v-text-field v-model="editedUser.phone" label="Phone" required></v-text-field>
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="editedUser.classroomId"
+                    :items="classrooms"
+                    item-text="name"
+                    item-value="id"
+                    label="Choose a classroom"
+                  >
+                    <template v-slot:item="{ item, attrs, on }">
+                      <v-list-item v-bind="attrs" v-on="on">
+                        <v-list-item-content>
+                          <v-list-item-title
+                            :id="attrs['aria-labelledby']"
+                            v-text="`${item.name} / ${item.capacity}`"
+                          ></v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </template>
+                  </v-select>
                 </v-col>
                 <v-col cols="12" sm="12">
                   <v-date-picker v-model="editedUser.birthday" label="Birthday" required></v-date-picker>
@@ -99,10 +116,12 @@ export default {
       headers: [
         { text: "Name", value: "name" },
         { text: "Surname", value: "surname" },
-        { text: "Email", value: "email" },
+        { text: "Email", value: "User.email" },
         { text: "Address", value: "address" },
         { text: "Phone", value: "phone" },
         { text: "Birthday", value: "birthday" },
+        { text: "Classroom", value: "Classroom.name" },
+        { text: "Photo", value: "avatars" },
         { text: "Actions", value: "actions", sortable: false }
       ],
       dialog: false,
@@ -112,7 +131,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["teachers", "success_message", "error_message"])
+    ...mapGetters(["teachers", "success_message", "error_message"]),
+    userRole() {
+      return this.$store.getters["Auth/user"].User.role;
+    },
+    classrooms() {
+      return this.$store.state.Classroom.classrooms;
+    }
   },
   mounted() {
     this.getTeachers();
@@ -132,8 +157,12 @@ export default {
       this.deleteDialog = true;
     },
     teacherDelete(teacher) {
-      this.deleteTeacher(teacher.id);
+      this.deleteTeacher(teacher.UserId);
       this.deleteDialog = false;
+    },
+    closeDialog() {
+      this.editedUser = null;
+      this.dialog = false;
     }
   }
 };

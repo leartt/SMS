@@ -108,8 +108,13 @@
           to: '/pages/user',
         },
         {
+          title: 'Admin',
+          icon: 'mdi-account-lock',
+          to: '/admins',
+        },
+        {
           title: 'Teachers',
-          icon: 'mdi-account-tie-voice',
+          icon: 'mdi-account-tie',
           to: '/teachers',
         },
         {
@@ -121,6 +126,16 @@
           title: 'Parents',
           icon: 'mdi-human-male-boy',
           to: '/parents',
+        },
+        {
+          title: 'Classroom',
+          icon: 'mdi-home-import-outline',
+          to: '/classrooms',
+        },
+        {
+          title: 'Feedbacks',
+          icon: 'mdi-image-filter-none',
+          to: '/feedbacks',
         },
       ],
     }),

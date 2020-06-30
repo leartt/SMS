@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+
 Vue.use(Router)
 
 export default new Router({
@@ -11,6 +12,7 @@ export default new Router({
       name: 'Login',
       path: '/login',
       component: () => import('@/views/dashboard/Login'),
+      meta: { requiresGuest: true }
     },
     {
       path: '/',
@@ -30,44 +32,97 @@ export default new Router({
           path: 'pages/user',
           component: () => import('@/views/dashboard/pages/UserProfile'),
         },
+
+        // Admin routes =>
+        {
+          name: 'Admin',
+          path: 'admins',
+          component: () => import('@/views/dashboard/components/Admin/Admins'),
+          meta: { requiresAdmin: true }
+        },
+
+        {
+          name: 'Register Admin',
+          path: 'admins/register',
+          component: () => import('@/views/dashboard/components/Admin/RegisterAdmin'),
+          meta: { requiresAdmin: true }
+        },
+
+        // End admin routes <==
+
+
         // Parent routes =>
         {
           name: 'Parent',
-          path: '/parents',
+          path: 'parents',
           component: () => import('@/views/dashboard/components/Parent/Parents'),
         },
+
         {
           name: 'Register Parent',
-          path: '/parents/register',
+          path: 'parents/register',
           component: () => import('@/views/dashboard/components/Parent/RegisterParent'),
+          meta: { requiresAdmin: true }
         },
         // End Parent routes <==
 
         // Student routes =>
         {
           name: 'Student',
-          path: '/students',
+          path: 'students',
           component: () => import('@/views/dashboard/components/Student/Students'),
         },
+
         {
           name: 'Register Student',
-          path: '/students/register',
+          path: 'students/register',
           component: () => import('@/views/dashboard/components/Student/RegisterStudent'),
+          meta: { requiresAdmin: true }
         },
         // End Parent routes <==
-        
+
         // Teacher routes =>
         {
           name: 'Teacher',
-          path: '/teachers',
+          path: 'teachers',
           component: () => import('@/views/dashboard/components/Teacher/Teachers'),
         },
+
         {
           name: 'Register Teacher',
-          path: '/teachers/register',
+          path: 'teachers/register',
           component: () => import('@/views/dashboard/components/Teacher/RegisterTeacher'),
+          meta: { requiresAdmin: true }
         },
         // End Teacher routes <==
+
+        // Classroom routes =>
+        {
+          name: 'Classroom',
+          path: 'classrooms',
+          component: () => import('@/views/dashboard/components/Classroom/Classrooms'),
+        },
+        {
+          name: 'Register Classroom',
+          path: 'classrooms/create',
+          component: () => import('@/views/dashboard/components/Classroom/CreateClassroom'),
+          meta: { requiresAdmin: true }
+        },
+        // End Classroom routes <==
+
+        // Feedback routes =>
+        {
+          name: 'Feedback',
+          path: '/feedbacks',
+          component: () => import('@/views/dashboard/components/Feedback/Feedbacks'),
+        },
+        {
+          name: 'Create Feedback',
+          path: 'feedbacks/create',
+          component: () => import('@/views/dashboard/components/Feedback/CreateFeedback'),
+          meta: { requiresParent: true }
+        },
+        // End Feedback routes <==
       ],
     },
   ],

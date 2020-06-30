@@ -5,13 +5,13 @@
     <v-card>
       <v-card-title class="my-3">
         <v-text-field v-model="search" label="Search" single-line hide-details></v-text-field>
-        <router-link to="/parents/register">
+        <router-link v-if="userRole === 'admin'" :to="{ name: 'Register Parent'}">
           <v-btn color="green" class="mx-2">Register New Parent</v-btn>
         </router-link>
       </v-card-title>
 
       <v-data-table :headers="headers" :items="parents" :search="search">
-        <template v-slot:item.actions="{ item }">
+        <template v-if="userRole === 'admin'" v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="openEdit(item)">mdi-pencil</v-icon>
           <v-icon small class="mr-2" @click="openDelete(item)">mdi-delete</v-icon>
         </template>
@@ -22,9 +22,13 @@
         </template>
       </v-data-table>
 
-      
-
-      <v-dialog v-if="editedUser" v-model="dialog" :retain-focus="false" persistent max-width="800px">
+      <v-dialog
+        v-if="editedUser"
+        v-model="dialog"
+        :retain-focus="false"
+        persistent
+        max-width="800px"
+      >
         <v-card>
           <v-card-title>
             <span class="headline">Edit Parent</span>
@@ -57,7 +61,6 @@
               </v-row>
             </v-container>
           </v-card-text>
-          
 
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -116,10 +119,38 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["parents", "success_message", "error_message"])
+    ...mapGetters(["success_message", "error_message"]),
+    students() {
+      return this.$store.getters["Student/students"];
+    },
+    userRole() {
+      return this.$store.getters["Auth/user"].User.role;
+    },
+    loggedInUser() {
+      return this.$store.getters["Auth/user"];
+    },
+    parents() {
+      if (this.userRole === "teacher") {
+        return this.$store.state.Parent.parents.filter(p => {
+          return p.Students.length > 0 ? p.Students[0].classroomId == this.loggedInUser.ClassroomId : ''
+        });
+      }
+      else if(this.userRole === 'parent') {
+        let stdClassroms = this.loggedInUser.Students.map( std => std.classroomId );
+        return this.$store.state.Parent.parents.filter(p => {
+          return stdClassroms.some(classroom => {
+            return p.Students.some( st => st.classroomId == classroom)
+          })
+        });
+      }
+      else {
+        return this.$store.getters['Parent/parents'];
+      }
+    }
   },
   mounted() {
     this.getParents();
+    this.$store.dispatch("Student/getStudents");
   },
   methods: {
     ...mapActions(["getParents", "updateParent", "deleteParent"]),
@@ -138,6 +169,7 @@ export default {
     parentDelete(parent) {
       this.deleteParent(parent.User.id);
       this.deleteDialog = false;
+      this.getParents();
     },
     closeDialog() {
       this.editedUser = null;

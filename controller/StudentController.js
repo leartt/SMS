@@ -1,14 +1,25 @@
 const User = require('../models').User
 const Student = require('../models').Student
 const Parent = require('../models').Parent
+const Classroom = require('../models').Classroom
+const checkPermission = require('../permission');
 
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
-
 const upload = require('../uploader');
+
+const { Op } = require('sequelize')
 
 create = [upload.single('photo_path'), async (req, res) => {
     try {
-        let { email, password, role, name, surname, address, phone, birthday, parentId } = req.body;
+        checkPermission(req.user.role, 'ADMIN');
+
+        const emailExist = await User.findOne({ where: { email: req.body.email } });
+        if (emailExist) {
+            return res.status(400).json({ msg: 'This email already exists', success: false })
+        }
+
+        let { email, password, role, name, surname, address, phone, birthday, parentId, classroomId } = req.body;
         const user = {
             email,
             password,
@@ -22,6 +33,7 @@ create = [upload.single('photo_path'), async (req, res) => {
             birthday,
             photo_path: req.file.path,
             parentId,
+            classroomId
         }
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(user.password, salt, async (err, hash) => {
@@ -51,6 +63,7 @@ create = [upload.single('photo_path'), async (req, res) => {
 
 updateStudent = async (req, res) => {
     try {
+        checkPermission(req.user.role, 'ADMIN')
         let { name, surname, address, phone, birthday, parentId } = req.body;
 
         const updatedStudent = await Student.update({
@@ -61,7 +74,12 @@ updateStudent = async (req, res) => {
             birthday,
             parentId,
             include: [
-                { model: User }
+                {
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                }
             ]
         },
             { where: { id: req.params.id } }
@@ -78,7 +96,15 @@ findOne = async (req, res) => {
         const student = await Student.findOne({
             where: { id: req.params.id },
             include: [
-                { model: User }
+                {
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                },
+                {
+                    model: Classroom
+                }
             ]
         });
         res.status(200).json({ student, success: true });
@@ -96,7 +122,13 @@ findStudents = async (req, res) => {
                     model: Parent,
                 },
                 {
-                    model: User
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                },
+                {
+                    model: Classroom
                 }
             ]
         });
@@ -109,12 +141,17 @@ findStudents = async (req, res) => {
 
 deleteStudent = async (req, res) => {
     try {
-        const deletedStudent = await User.destroy({
+        checkPermission(req.user.role, 'ADMIN');
+        const student = await Student.findOne({ where: { UserId: req.params.id } })
+        const deletedUser = await User.destroy({
             where: {
-                id: req.params.id
-            }
+                [Op.and]: [{ id: req.params.id }, { role: 'student' }]
+            },
         })
-        res.status(200).json({ deletedStudent, msg: 'Student has been deleted succesfully', success: true });
+        await fs.unlink(student.photo_path, err => {
+            if (err) throw err;
+        })
+        res.status(200).json({ deletedUser, msg: 'Student has been deleted succesfully', success: true });
     }
     catch (err) {
         res.status(400).json({ msg: err, success: false })

@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Student.belongsTo(models.User)
     Student.belongsTo(models.Parent, { foreignKey: 'parentId' })
+    Student.belongsTo(models.Classroom, { foreignKey: 'classroomId'})
   };
   return Student;
 };

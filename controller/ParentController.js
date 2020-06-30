@@ -2,17 +2,24 @@ const Parent = require('../models').Parent;
 const User = require('../models').User;
 const Student = require('../models').Student;
 
+const checkPermission = require('../permission');
+
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-require('dotenv').config()
 const key = process.env.secret
-
+const { Op } = require('sequelize');
 const upload = require('../uploader');
 
 
 exports.create = [upload.single('photo_path'), async (req, res) => {
     try {
+        checkPermission(req.user.role, 'ADMIN');
+        const emailExist = await User.findOne({ where: { email: req.body.email } });
+        if (emailExist) {
+            return res.status(400).json({ msg: 'This email already exists', success: false })
+        }
         let { email, password, role, name, surname, address, phone, birthday } = req.body;
 
         const user = {
@@ -55,6 +62,7 @@ exports.create = [upload.single('photo_path'), async (req, res) => {
 
 exports.updateParent = async (req, res) => {
     try {
+        checkPermission(req.user.role, 'ADMIN');
         let { name, surname, address, phone, birthday } = req.body;
 
         const updatedParent = await Parent.update({
@@ -64,7 +72,12 @@ exports.updateParent = async (req, res) => {
             phone,
             birthday,
             include: [
-                { model: User }
+                {
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                }
             ]
         },
             { where: { id: req.params.id } }
@@ -82,7 +95,12 @@ exports.findOne = async (req, res) => {
         const parent = await Parent.findOne({
             where: { id: req.params.id },
             include: [
-                { model: User }
+                {
+                    model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
+                }
             ]
         });
         res.status(200).json({ parent, success: true });
@@ -92,44 +110,6 @@ exports.findOne = async (req, res) => {
     }
 }
 
-exports.login = async (req, res) => {
-    let parent = await Parent.findOne({ where: { email: req.body.email } })
-    if (!parent) {
-        return res.status(404).json({
-            msg: "Parent not found",
-            success: false
-        });
-    }
-
-    //Nese ekziston user atehere i krahasojme passwords
-    bcrypt.compare(req.body.password, parent.password).then(isMatch => {
-        if (isMatch) {
-            //User password eshte korrekt dhe dergojme JSON Token per ate user
-            const payload = {
-                id: parent.id,
-                username: parent.username,
-                name: parent.name,
-                email: parent.email
-            }
-            jwt.sign(payload, key, {
-                expiresIn: 604800
-            }, (err, token) => {
-                res.status(200).json({
-                    success: true,
-                    token: `Bearer ${token}`,
-                    user: parent,
-                    msg: "You're now logged in"
-                });
-            })
-        }
-        else {
-            return res.status(404).json({
-                msg: "Incorrect password",
-                success: false
-            })
-        }
-    })
-}
 
 exports.findParents = async (req, res) => {
     try {
@@ -137,6 +117,9 @@ exports.findParents = async (req, res) => {
             include: [
                 {
                     model: User,
+                    attributes: {
+                        exclude: ['password']
+                    }
                 },
                 {
                     model: Student
@@ -146,15 +129,22 @@ exports.findParents = async (req, res) => {
         res.status(200).json({ parents, success: true });
     }
     catch (err) {
-        res.status(400).json({ err, success: false})
+        res.status(400).json({ err, success: false })
     }
 }
 
 exports.delete = async (req, res) => {
     try {
+        checkPermission(req.user.role, 'ADMIN');
+        const parent = await Parent.findOne({ where: { UserId: req.params.id } })
         const deletedUser = await User.destroy({
-            where: { id: req.params.id }
+            where: {
+                [Op.and]: [{ id: req.params.id }, { role: 'parent' }]
+            },
         });
+        await fs.unlink(parent.photo_path, err => {
+            if (err) throw err;
+        })
         res.status(200).json({ deletedUser, msg: 'Parent has been deleted succesfully', success: true });
     }
 

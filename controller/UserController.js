@@ -10,13 +10,22 @@ const key = process.env.secret;
 
 
 exports.login = async (req, res) => {
-    let user = await User.findOne({ where: { email: req.body.email } })
+    let user = await User.findOne({
+        where: { email: req.body.email },
+    })
     if (!user) {
         return res.status(404).json({
             msg: "User not found",
             success: false
         });
     }
+
+    if(user.role === 'admin' && !user.confirmedEmail) {
+        return res.status(404).json({
+            msg: 'Please confirm your account',
+            success: false,
+        })
+    } 
 
     //Nese ekziston user atehere i krahasojme passwords
     bcrypt.compare(req.body.password, user.password).then(isMatch => {
@@ -28,12 +37,11 @@ exports.login = async (req, res) => {
                 role: user.role
             }
             jwt.sign(payload, key, {
-                expiresIn: "24h"
+                expiresIn: "10h"
             }, (err, token) => {
                 res.status(200).json({
                     success: true,
                     token: `Bearer ${token}`,
-                    user: user,
                     msg: "You're now logged in"
                 });
             })

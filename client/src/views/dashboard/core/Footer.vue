@@ -17,7 +17,6 @@
             :href="link.href"
             class="mr-0 grey--text text--darken-3"
             rel="noopener"
-            target="_blank"
             v-text="link.text"
           />
         </v-col>
@@ -29,11 +28,7 @@
           md="auto"
         >
           <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">
-            &copy; 2020, made with
-            <v-icon size="18">
-              mdi-heart
-            </v-icon>
-            by Codekssoftware.
+            &copy; 2020, School Management System
           </div>
         </v-col>
       </v-row>

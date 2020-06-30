@@ -92,7 +92,7 @@ const mutations = {
     },
     DELETE_PARENT(state, id) {
         state.parents = state.parents.filter(p => {
-            return p.id != id;
+            return p.UserId != id;
         });
     },
     SET_SUCCESS_MESSAGE(state, msg) {

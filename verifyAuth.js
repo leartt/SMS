@@ -7,6 +7,7 @@ const verifyAuth = (req, res, next) => {
 
     try {
         const verified = jwt.verify(token.split(' ')[1], process.env.secret);
+        req.user = verified;
         next();
     }
     catch(err) {

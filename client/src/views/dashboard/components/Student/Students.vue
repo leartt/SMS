@@ -3,16 +3,18 @@
     <v-alert v-if="success_message" color="success">{{success_message}}</v-alert>
     <v-alert v-if="error_message" color="error">{{error_message}}</v-alert>
 
+    <p v-if="userRole === 'teacher'" color="blue">Your classroom is {{loggedInUser.Classroom.name}}</p>
+
     <v-card>
       <v-card-title class="my-3">
         <v-text-field v-model="search" label="Search" single-line hide-details></v-text-field>
-        <router-link to="/students/register">
+        <router-link v-if="userRole === 'admin'" to="/students/register">
           <v-btn color="green" class="mx-2">Register New Student</v-btn>
         </router-link>
       </v-card-title>
 
       <v-data-table :headers="headers" :items="students" :search="search">
-        <template v-slot:item.actions="{ item }">
+        <template v-if="userRole === 'admin'" v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="openEdit(item)">mdi-pencil</v-icon>
           <v-icon small class="mr-2" @click="openDelete(item)">mdi-delete</v-icon>
         </template>
@@ -110,7 +112,8 @@ export default {
         { text: "Phone", value: "phone" },
         { text: "Birthday", value: "birthday" },
         { text: "Parent", value: "parent" },
-        { text: "Image", value: "avatars" },
+        { text: "Classroom", value: "Classroom.name" },
+        { text: "Image", value: "avatars", sortable: false },
         { text: "Actions", value: "actions", sortable: false }
       ],
       dialog: false,
@@ -120,9 +123,37 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["students", "success_message", "error_message"]),
+    ...mapGetters(["success_message", "error_message"]),
     parents() {
       return this.$store.state.Parent.parents;
+    },
+    userRole() {
+      return this.$store.getters["Auth/user"].User.role;
+    },
+    loggedInUser() {
+      return this.$store.getters["Auth/user"];
+    },
+    students() {
+      if (this.userRole === "parent") {
+        let stdClassroms = this.loggedInUser.Students.map( std => std.classroomId );
+        return this.$store.state.Student.students.filter(s => {
+          return stdClassroms.some(classroom => classroom == s.classroomId);
+        });
+      }   
+      else if (this.userRole === "teacher") {
+        return this.$store.state.Student.students.filter(s => {
+          return s.classroomId === this.loggedInUser.classroomId;
+        });
+      }
+      else if(this.userRole === 'student') {
+        return this.$store.state.Student.students.filter(s => {
+          return s.classroomId === this.loggedInUser.classroomId;
+        })
+      }
+      else {
+        return this.$store.state.Student.students;
+      }
+      return this.$store.state.Student.students;
     }
   },
   mounted() {
@@ -145,13 +176,12 @@ export default {
     },
     studentDelete(student) {
       this.deleteStudent(student.UserId);
-      this.$router.go({name: 'Student'})
       this.deleteDialog = false;
     },
     closeDialog() {
       this.editedUser = null;
       this.dialog = false;
-    },
+    }
   }
 };
 </script>

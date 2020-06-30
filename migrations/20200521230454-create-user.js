@@ -17,6 +17,9 @@ module.exports = {
       role: {
         type: Sequelize.STRING
       },
+      confirmedEmail: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

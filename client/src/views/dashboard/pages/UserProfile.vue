@@ -21,7 +21,7 @@
                 </v-col>
 
                 <v-col cols="12">
-                  <v-text-field label="Email Address" class="purple-input" disabled />
+                  <v-text-field label="Email Address" class="purple-input" :value="user.User.email" disabled />
                 </v-col>
 
                 <v-col cols="12">
@@ -55,7 +55,7 @@
 
             <p
               class="font-weight-light grey--text"
-            >Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...</p>
+            >Role: {{user.User.role.toUpperCase()}}</p>
 
             <v-btn color="success" rounded class="mr-0">Follow</v-btn>
           </v-card-text>
@@ -71,7 +71,7 @@ export default {
   computed: {
     user() {
       return this.$store.state.Auth.user;
-    }
+    },
   },
   created() {
     this.$store.dispatch("Auth/getProfile");

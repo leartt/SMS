@@ -22,7 +22,7 @@
             type="password"
             label="Password"
             :rules="passwordRules"
-            hint="At least 8 characters"
+            hint="At least 6 characters"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
@@ -31,9 +31,7 @@
         <v-col cols="12" md="6">
           <v-text-field v-model="phone" label="Phone" :rules="phoneRules" required></v-text-field>
         </v-col>
-        <v-col cols="12" md="6">
-          <v-date-picker v-model="birthday" label="Birthday" :rules="birthdayRules" required></v-date-picker>
-        </v-col>
+
         <v-col cols="12" md="6">
           <v-select
             v-model="parentId"
@@ -59,12 +57,38 @@
           </v-select>
         </v-col>
 
-        <v-col cols="12">
+        <v-col cols="12" md="6">
+          <v-select
+            v-model="classroomId"
+            :items="classrooms"
+            item-text="name"
+            item-value="id"
+            :rules="classroomRules"
+            label="Choose a classroom"
+          >
+            <template v-slot:item="{ item, attrs, on }">
+              <v-list-item v-bind="attrs" v-on="on">
+                <v-list-item-content>
+                  <v-list-item-title
+                    :id="attrs['aria-labelledby']"
+                    v-text="`${item.name} / ${item.capacity}`"
+                  ></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-select>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-date-picker v-model="birthday" label="Birthday" :rules="birthdayRules" required></v-date-picker>
+        </v-col>
+
+        <v-col cols="12" md="6">
           <v-file-input
-            type="file"
             v-model="photo_path"
+            type="file"
+            placeholder="Choose image"
             :rules="photoRules"
-            placeholder="Choose a photo"
             required
           ></v-file-input>
         </v-col>
@@ -75,9 +99,7 @@
         </v-col>
       </v-row>
     </v-form>
-
   </v-container>
-
 </template>
 
 <script>
@@ -99,7 +121,8 @@ export default {
     address: "",
     phone: "",
     birthday: null,
-    parentId: "",
+    parentId: null,
+    classroomId: null,
     photo_path: null,
     parentsList: null,
 
@@ -117,7 +140,7 @@ export default {
     ],
     passwordRules: [
       v => !!v || "Password is required",
-      v => (v && v.length > 5) || "Password must be greater than 5 characters"
+      v => (v && v.length > 5) || "Password must be at least 6 characters"
     ],
     addressRules: [v => !!v || "Address is required"],
     phoneRules: [
@@ -126,15 +149,20 @@ export default {
     ],
     birthdayRules: [v => !!v || "Birthday is required"],
     photoRules: [v => !!v || "Photo is required"],
-    parentRules: [v => !!v || "Parent must be selected"]
+    parentRules: [v => !!v || "Parent must be selected"],
+    classroomRules: [v => !!v || "Classroom must be selected"]
   }),
   mounted() {
     this.$store.dispatch("Parent/getParents");
+    this.$store.dispatch("Classroom/getClassrooms");
   },
   computed: {
     ...mapGetters(["success_message", "error_message"]),
     parents() {
       return this.$store.state.Parent.parents;
+    },
+    classrooms() {
+      return this.$store.state.Classroom.classrooms;
     }
   },
   methods: {
@@ -159,6 +187,7 @@ export default {
         formData.set("phone", this.phone);
         formData.set("birthday", this.birthday);
         formData.set("parentId", this.parentId);
+        formData.set("classroomId", this.classroomId);
         formData.append("photo_path", this.photo_path, this.photo_path.name);
 
         scroll(0, 0);
@@ -166,16 +195,16 @@ export default {
         this.addStudent(formData)
           .then(res => {
             if (res.data.success) {
-              this.$refs.form.reset()
+              this.$refs.form.reset();
             }
           })
           .catch(err => console.log(err));
       }
     },
     resetForm() {
-      this.$refs.form.reset()
+      this.$refs.form.reset();
     }
-  } 
+  }
 };
 </script>
 

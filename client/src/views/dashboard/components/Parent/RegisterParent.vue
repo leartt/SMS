@@ -25,7 +25,7 @@
             type="password"
             label="Password"
             :rules="passwordRules"
-            hint="At least 8 characters"
+            hint="At least 6 characters"
           ></v-text-field>
         </v-col>
 
@@ -91,7 +91,7 @@ export default {
     ],
     passwordRules: [
       v => !!v || "Password is required",
-      v => (v && v.length > 5) || "Password must be greater than 5 characters"
+      v => (v && v.length > 5) || "Password must be at least 6 characters"
     ],
     addressRules: [v => !!v || "Address is required"],
     phoneRules: [
@@ -109,16 +109,6 @@ export default {
     ...mapActions(["addParent"]),
     submitForm(e) {
       e.preventDefault();
-      // const parent = {
-      //   email: this.email,
-      //   password: this.password,
-      //   role: this.role,
-      //   name: this.name,
-      //   surname: this.surname,
-      //   address: this.address,
-      //   phone: this.phone,
-      //   birthday: this.birthday
-      // };
       this.$refs.form.validate();
       if (this.valid) {
         const formData = new FormData();

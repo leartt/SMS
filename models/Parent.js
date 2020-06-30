@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
   Parent.associate = function (models) {
     // associations can be defined here
     Parent.belongsTo(models.User);
-    Parent.hasMany(models.Student)
+    Parent.hasMany(models.Student);
+    Parent.hasMany(models.Feedback);
   };
   return Parent;
 };
