@@ -134,18 +134,18 @@ export default {
       return this.$store.getters["Auth/user"];
     },
     students() {
-      if (this.userRole === "parent") {
+      if (this.userRole.toUpperCase() === "PARENT") {
         let stdClassroms = this.loggedInUser.Students.map( std => std.classroomId );
         return this.$store.state.Student.students.filter(s => {
           return stdClassroms.some(classroom => classroom == s.classroomId);
         });
       }   
-      else if (this.userRole === "teacher") {
+      else if (this.userRole.toUpperCase() === "TEACHER") {
         return this.$store.state.Student.students.filter(s => {
           return s.classroomId === this.loggedInUser.classroomId;
         });
       }
-      else if(this.userRole === 'student') {
+      else if(this.userRole.toUpperCase() === 'STUDENT') {
         return this.$store.state.Student.students.filter(s => {
           return s.classroomId === this.loggedInUser.classroomId;
         })

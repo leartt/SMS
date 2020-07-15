@@ -16,6 +16,10 @@
           <v-icon small class="mr-2" @click="openEdit(item)">mdi-pencil</v-icon>
           <v-icon small class="mr-2" @click="openDelete(item)">mdi-delete</v-icon>
         </template>
+
+        <template v-slot:item.createdDate="{ item }">
+          {{item.createdAt.split('T')[0]}}
+        </template>
       </v-data-table>
 
       <v-dialog v-if="editedClassroom" v-model="dialog" :retain-focus="false" max-width="800px">
@@ -87,7 +91,7 @@ export default {
         { text: "ID", value: "id" },
         { text: "Name", value: "name" },
         { text: "Capacity", value: "capacity" },
-        { text: "Date Created", value: "createdAt" },
+        { text: "Date Created", value: "createdDate" },
         { text: "Actions", value: "actions", sortable: false }
       ],
 

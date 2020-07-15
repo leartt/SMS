@@ -1,10 +1,10 @@
 const Feedback = require('../models').Feedback;
 const Teacher = require('../models').Teacher;
 const Parent = require('../models').Parent;
+const Report = require('../models/Report');
 
 var PdfPrinter = require('pdfmake');
 var fs = require('fs');
-const { array } = require('../uploader');
 
 exports.create = async (req, res) => {
     try {
@@ -85,7 +85,6 @@ exports.generateReport = async (req, res) => {
                 `${feedback.Teacher.name} ${feedback.Teacher.surname}`])
         });
 
-        console.log(feedbacksReportsBody);
         // Define font files
         var fonts = {
             Courier: {
@@ -138,7 +137,14 @@ exports.generateReport = async (req, res) => {
         var pdfDoc = printer.createPdfKitDocument(docDefinition, options);
         pdfDoc.pipe(fs.createWriteStream(`reports/${Date.now()}feedbackReports.pdf`));
         pdfDoc.end();
-        res.status(200).json({ msg: 'Reports generated', success: true });
+        const report = new Report({
+            name: 'Feedbacks Report',
+            filePath: pdfDoc._readableState.pipes.path,
+            date: new Date().toUTCString()
+        })
+        
+        let generatedReport = await report.save();
+        res.status(200).json({ generatedReport, msg: 'Reports generated', success: true });
     }
     catch (err) {
         res.status(400).json({ msg: err, success: false })

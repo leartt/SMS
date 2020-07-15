@@ -7,11 +7,15 @@ const passport = require('passport');
 
 const app = express();
 
+require('./mongoDB');
+
 // Middlewares
 app.use(cors());
 app.use(express.json());
 
 app.use('/uploads', express.static('uploads'));
+app.use('/reports', express.static('reports'));
+app.use('/exams', express.static('exams'));
 
 
 app.use(passport.initialize());
@@ -42,8 +46,18 @@ app.use('/feedback', auth, feedbackRoute);
 const classroomRoute = require('./routes/classroom');
 app.use('/classroom', auth, classroomRoute);
 
+const courseRoute = require('./routes/course');
+app.use('/course', courseRoute);
 
-require('./generatePdf');
+const examRoute = require('./routes/exam');
+app.use('/exam', examRoute);
+
+const examResultRoute = require('./routes/examResult');
+app.use('/exam/results', examResultRoute);
+
+const reportsRoute = require('./routes/reports');
+app.use('/reports', reportsRoute);
+
 
 const PORT = process.env.PORT || 5000;
 

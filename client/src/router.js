@@ -123,6 +123,27 @@ export default new Router({
           meta: { requiresParent: true }
         },
         // End Feedback routes <==
+
+        
+        // Exam routes =>
+        {
+          name: 'Exams',
+          path: '/exams',
+          component: () => import('@/views/dashboard/components/Exam/Exam'),
+        },
+        {
+          name: 'Register Exam',
+          path: '/exams/register',
+          component: () => import('@/views/dashboard/components/Exam/RegisterExam'),
+        },
+        // End Feedback routes <==
+
+        {
+          name: 'Reports',
+          path: 'reports',
+          component: () => import('@/views/dashboard/components/Report/Reports'),
+          meta: { requiresAdmin: true }
+        },
       ],
     },
   ],

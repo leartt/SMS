@@ -21,7 +21,7 @@ exports.login = async (req, res) => {
     }
 
     if(user.role === 'admin' && !user.confirmedEmail) {
-        return res.status(404).json({
+        return res.status(403).json({
             msg: 'Please confirm your account',
             success: false,
         })
@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
             })
         }
         else {
-            return res.status(404).json({
+            return res.status(400).json({
                 msg: "Incorrect password",
                 success: false
             })

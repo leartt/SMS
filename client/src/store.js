@@ -7,6 +7,8 @@ import Auth from './Warehouse/Auth';
 import Teacher from './Warehouse/Teacher';
 import Feedback from './Warehouse/Feedback';
 import Classroom from './Warehouse/Classroom';
+import Course from './Warehouse/Course';
+import Exam from './Warehouse/Exam';
 
 Vue.use(Vuex)
 
@@ -19,6 +21,8 @@ export default new Vuex.Store({
     Teacher,
     Classroom,
     Feedback,
+    Course,
+    Exam,
   },
   state: {
     barColor: 'rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)',

@@ -127,6 +127,7 @@
           icon: 'mdi-human-male-boy',
           to: '/parents',
         },
+        
         {
           title: 'Classroom',
           icon: 'mdi-home-import-outline',
@@ -136,6 +137,16 @@
           title: 'Feedbacks',
           icon: 'mdi-image-filter-none',
           to: '/feedbacks',
+        },
+        {
+          title: 'Exams',
+          icon: 'mdi-note-multiple-outline',
+          to: '/exams',
+        },
+        {
+          title: 'Reports',
+          icon: 'mdi-image-filter-none',
+          to: '/reports',
         },
       ],
     }),
