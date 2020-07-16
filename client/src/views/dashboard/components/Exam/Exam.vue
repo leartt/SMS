@@ -2,6 +2,15 @@
   <v-container>
     <v-alert v-if="success_message" color="success">{{success_message}}</v-alert>
     <v-alert v-if="error_message" color="error">{{error_message}}</v-alert>
+
+    <v-row>
+      <v-col cols="6">
+        <router-link v-if="userRole === 'admin' || userRole === 'teacher'" :to="{ name: 'Exam Results'}">
+          <v-btn class="upload-exam-btn mx-2" color="green">Upload Exam Results</v-btn>
+        </router-link>
+      </v-col>
+    </v-row>
+
     <v-card>
       <v-card-title class="my-3">
         <v-text-field v-model="search" label="Search" single-line hide-details></v-text-field>
@@ -39,7 +48,12 @@
                   <v-date-picker v-model="editedExam.date" color="warning" :rules="dateRules"></v-date-picker>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-time-picker v-model="editedExam.time" color="warning" format="24hr" :rules="timeRules"></v-time-picker>
+                  <v-time-picker
+                    v-model="editedExam.time"
+                    color="warning"
+                    format="24hr"
+                    :rules="timeRules"
+                  ></v-time-picker>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-select
@@ -145,7 +159,7 @@ export default {
       dateRules: [v => !!v || "Date is required"],
       timeRules: [v => !!v || "Time is required"],
       classroomRules: [v => !!v || "Classroom must be selected"],
-      courseRules: [v => !!v || "Course must be selected"],
+      courseRules: [v => !!v || "Course must be selected"]
     };
   },
   created() {
@@ -189,7 +203,7 @@ export default {
       this.editedExam = null;
       this.dialog = false;
     }
-  }
+  },
 };
 </script>
 

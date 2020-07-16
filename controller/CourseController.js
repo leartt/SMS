@@ -8,10 +8,12 @@ const Course = require('../models/Course');
 
 exports.create = async (req, res) => {
     try {
+        
         const course = new Course({
-            name: req.body.name
+            name: req.body.name,
+            teacher: req.body.teacher
         });
-        const createdCourse = await course.save();
+        await course.save();
         res.status(200).json({ course, msg: 'Course has been created successfully', success: true })
     } catch (err) {
         res.status(400).json({ msg: err, success: false })

@@ -113,7 +113,7 @@ export default new Router({
         // Feedback routes =>
         {
           name: 'Feedback',
-          path: '/feedbacks',
+          path: 'feedbacks',
           component: () => import('@/views/dashboard/components/Feedback/Feedbacks'),
         },
         {
@@ -124,19 +124,25 @@ export default new Router({
         },
         // End Feedback routes <==
 
-        
+
         // Exam routes =>
         {
           name: 'Exams',
-          path: '/exams',
+          path: 'exams',
           component: () => import('@/views/dashboard/components/Exam/Exam'),
         },
         {
           name: 'Register Exam',
-          path: '/exams/register',
+          path: 'exams/register',
           component: () => import('@/views/dashboard/components/Exam/RegisterExam'),
         },
-        // End Feedback routes <==
+        {
+          name: 'Exam Results',
+          path: 'exams/result',
+          component: () => import('@/views/dashboard/components/Exam/Results'),
+        },
+
+        // End Exam routes <==
 
         {
           name: 'Reports',

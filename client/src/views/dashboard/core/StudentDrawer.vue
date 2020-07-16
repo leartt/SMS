@@ -122,6 +122,11 @@
           icon: 'mdi-human-male-boy',
           to: '/parents',
         },
+        {
+          title: 'Exams',
+          icon: 'mdi-pencil-box-multiple',
+          to: '/exams',
+        },
       ],
     }),
 

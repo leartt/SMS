@@ -12,24 +12,14 @@
     v-bind="$attrs"
   >
     <template v-slot:img="props">
-      <v-img
-        :gradient="`to bottom, ${barColor}`"
-        v-bind="props"
-      />
+      <v-img :gradient="`to bottom, ${barColor}`" v-bind="props" />
     </template>
 
     <v-divider class="mb-1" />
 
-    <v-list
-      dense
-      nav
-    >
+    <v-list dense nav>
       <v-list-item>
-        <v-list-item-avatar
-          class="align-self-center"
-          color="white"
-          contain
-        >
+        <v-list-item-avatar class="align-self-center" color="white" contain>
           <v-img
             src="https://demos.creative-tim.com/vuetify-material-dashboard/favicon.ico"
             max-height="30"
@@ -37,151 +27,145 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title
-            class="display-1"
-            v-text="profile.title"
-          />
+          <v-list-item-title class="display-1" v-text="profile.title" />
         </v-list-item-content>
       </v-list-item>
     </v-list>
 
     <v-divider class="mb-2" />
 
-    <v-list
-      expand
-      nav
-    >
+    <v-list expand nav>
       <!-- Style cascading bug  -->
       <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
 
       <template v-for="(item, i) in computedItems">
-        <base-item-group
-          v-if="item.children"
-          :key="`group-${i}`"
-          :item="item"
-        >
+        <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
           <!--  -->
         </base-item-group>
 
-        <base-item
-          v-else
-          :key="`item-${i}`"
-          :item="item"
-        />
+        <base-item v-else :key="`item-${i}`" :item="item" />
       </template>
 
       <!-- Style cascading bug  -->
       <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
     </v-list>
-
   </v-navigation-drawer>
 </template>
 
 <script>
-  // Utilities
-  import {
-    mapState,
-  } from 'vuex'
+// Utilities
+import { mapState } from "vuex";
 
-  export default {
-    name: 'DashboardCoreDrawer',
+export default {
+  name: "DashboardCoreDrawer",
 
-    props: {
-      expandOnHover: {
-        type: Boolean,
-        default: false,
+  props: {
+    expandOnHover: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  data: () => ({
+    items: [
+      {
+        icon: "mdi-view-dashboard",
+        title: "dashboard",
+        to: "/"
       },
+      {
+        icon: "mdi-account",
+        title: "user",
+        to: "/pages/user"
+      },
+      {
+        title: "Admin",
+        icon: "mdi-account-lock",
+        to: "/admins"
+      },
+      {
+        title: "Teachers",
+        icon: "mdi-account-tie",
+        to: "/teachers"
+      },
+      {
+        title: "Students",
+        icon: "mdi-account-multiple",
+        to: "/students"
+      },
+      {
+        title: "Parents",
+        icon: "mdi-human-male-boy",
+        to: "/parents"
+      },
+
+      {
+        title: "Classroom",
+        icon: "mdi-home-import-outline",
+        to: "/classrooms"
+      },
+      {
+        title: "Feedbacks",
+        icon: "mdi-image-filter-none",
+        to: "/feedbacks"
+      },
+      {
+        title: "Exams",
+        icon: "mdi-pencil-box-multiple",
+        group: "/exams",
+        children: [
+          {
+            title: "Exams",
+            to: '#',
+            icon: "mdi-pencil-box-multiple"
+          },
+          {
+            title: "Exam Results",
+            to: "result"
+          },
+        ]
+      },
+      {
+        title: "Reports",
+        icon: "mdi-image-filter-none",
+        to: "/reports"
+      }
+    ]
+  }),
+
+  computed: {
+    ...mapState(["barColor", "barImage"]),
+    drawer: {
+      get() {
+        return this.$store.state.drawer;
+      },
+      set(val) {
+        this.$store.commit("SET_DRAWER", val);
+      }
     },
-
-    data: () => ({
-      items: [
-        {
-          icon: 'mdi-view-dashboard',
-          title: 'dashboard',
-          to: '/',
-        },
-        {
-          icon: 'mdi-account',
-          title: 'user',
-          to: '/pages/user',
-        },
-        {
-          title: 'Admin',
-          icon: 'mdi-account-lock',
-          to: '/admins',
-        },
-        {
-          title: 'Teachers',
-          icon: 'mdi-account-tie',
-          to: '/teachers',
-        },
-        {
-          title: 'Students',
-          icon: 'mdi-account-multiple',
-          to: '/students',
-        },
-        {
-          title: 'Parents',
-          icon: 'mdi-human-male-boy',
-          to: '/parents',
-        },
-        
-        {
-          title: 'Classroom',
-          icon: 'mdi-home-import-outline',
-          to: '/classrooms',
-        },
-        {
-          title: 'Feedbacks',
-          icon: 'mdi-image-filter-none',
-          to: '/feedbacks',
-        },
-        {
-          title: 'Exams',
-          icon: 'mdi-note-multiple-outline',
-          to: '/exams',
-        },
-        {
-          title: 'Reports',
-          icon: 'mdi-image-filter-none',
-          to: '/reports',
-        },
-      ],
-    }),
-
-    computed: {
-      ...mapState(['barColor', 'barImage']),
-      drawer: {
-        get () {
-          return this.$store.state.drawer
-        },
-        set (val) {
-          this.$store.commit('SET_DRAWER', val)
-        },
-      },
-      computedItems () {
-        return this.items.map(this.mapItem)
-      },
-      profile () {
-        return {
-          avatar: true,
-          title: 'School Management'
-        }
-      },
+    computedItems() {
+      return this.items.map(this.mapItem);
     },
+    profile() {
+      return {
+        avatar: true,
+        title: "School Management"
+      };
+    }
+  },
 
-    methods: {
-      mapItem (item) {
-        return {
-          ...item,
-          children: item.children ? item.children.map(this.mapItem) : undefined,
-          title: this.$t(item.title),
-        }
-      },
-    },
+  methods: {
+    mapItem(item) {
+      return {
+        ...item,
+        children: item.children ? item.children.map(this.mapItem) : undefined,
+        title: this.$t(item.title)
+      };
+    }
   }
+};
 </script>
 
 <style lang="sass">
@@ -199,12 +183,12 @@
         width: 20px
 
         +ltr()
-          margin-right: 24px
-          margin-left: 12px !important
+        margin-right: 24px
+        margin-left: 12px !important
 
         +rtl()
-          margin-left: 24px
-          margin-right: 12px !important
+        margin-left: 24px
+        margin-right: 12px !important
 
     .v-list--dense
       .v-list-item
@@ -215,17 +199,17 @@
     .v-list-group--sub-group
       .v-list-item
         +ltr()
-          padding-left: 8px
+        padding-left: 8px
 
         +rtl()
-          padding-right: 8px
+        padding-right: 8px
 
       .v-list-group__header
         +ltr()
-          padding-right: 0
+        padding-right: 0
 
         +rtl()
-          padding-right: 0
+        padding-right: 0
 
         .v-list-item__icon--text
           margin-top: 19px
@@ -235,8 +219,8 @@
           order: 2
 
           +ltr()
-            margin-right: 8px
+          margin-right: 8px
 
           +rtl()
-            margin-left: 8px
+          margin-left: 8px
 </style>

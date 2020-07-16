@@ -128,6 +128,11 @@
           to: '/classrooms',
         },
         {
+          title: 'Exams',
+          icon: 'mdi-pencil-box-multiple',
+          to: '/exams',
+        },
+        {
           title: 'Feedbacks',
           icon: 'mdi-image-filter-none',
           to: '/feedbacks',

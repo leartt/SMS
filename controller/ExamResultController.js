@@ -5,7 +5,7 @@ const ExamResult = require('../models/ExamResult');
 const upload = require('../fileUploader');
 
 // var PdfPrinter = require('pdfmake');
-// var fs = require('fs');
+var fs = require('fs');
 
 exports.create = [upload.single('filePath'), async (req, res) => {
     try {
@@ -34,7 +34,7 @@ exports.findOne = async (req, res) => {
 
 exports.findExamsResult = async (req, res) => {
     try {
-        const examsResult = await ExamResult.find()
+        const examsResult = await ExamResult.find();
         res.status(200).json({ examsResult, success: true });
     }
     catch (err) {
@@ -44,8 +44,11 @@ exports.findExamsResult = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        await ExamResult.deleteOne({ _id: req.params.id })
+        const examResult = await ExamResult.findOneAndDelete({ _id: req.params.id })
         res.status(200).json({ msg: 'Exam result has been deleted succesfully', success: true });
+        await fs.unlink(examResult.filePath, err => {
+            if (err) throw err;
+        })
     }
     catch (err) {
         res.status(400).json({ msg: err, success: false })

@@ -72,7 +72,7 @@ const mutations = {
     },
     DELETE_EXAM(state, id) {
         state.exams = state.exams.filter(exam => {
-            return exam.id != id;
+            return exam._id != id;
         })
     },
     SET_SUCCESS_MESSAGE(state, msg) {

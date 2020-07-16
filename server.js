@@ -53,7 +53,7 @@ const examRoute = require('./routes/exam');
 app.use('/exam', examRoute);
 
 const examResultRoute = require('./routes/examResult');
-app.use('/exam/results', examResultRoute);
+app.use('/result/exam', examResultRoute);
 
 const reportsRoute = require('./routes/reports');
 app.use('/reports', reportsRoute);

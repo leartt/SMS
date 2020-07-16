@@ -12,6 +12,7 @@
 
     <div class="mx-3" />
 
+    <p class="mx-2 my-1" style="font-weight:bold">{{this.loggedInUser.User.email}}</p>
     <v-btn class="black" @click="logout">Logout</v-btn>
 
     <v-menu bottom left offset-y origin="top right" transition="scale-transition">
@@ -101,7 +102,10 @@ export default {
   }),
 
   computed: {
-    ...mapState(["drawer"])
+    ...mapState(["drawer"]),
+    loggedInUser() {
+      return this.$store.state.Auth.user;
+    }
   },
 
   methods: {

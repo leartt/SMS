@@ -130,18 +130,25 @@ export default {
       return this.$store.getters["Auth/user"];
     },
     parents() {
-      if (this.userRole === "teacher") {
+      if (this.userRole.toUpperCase() === "TEACHER") {
         return this.$store.state.Parent.parents.filter(p => {
-          return p.Students.length > 0 ? p.Students[0].classroomId == this.loggedInUser.ClassroomId : ''
+          return p.Students.length > 0 ? 
+            p.Students.some(s => s.classroomId == this.loggedInUser.classroomId) : '';
         });
       }
-      else if(this.userRole === 'parent') {
+      else if(this.userRole.toUpperCase() === 'PARENT') {
         let stdClassroms = this.loggedInUser.Students.map( std => std.classroomId );
         return this.$store.state.Parent.parents.filter(p => {
           return stdClassroms.some(classroom => {
             return p.Students.some( st => st.classroomId == classroom)
           })
         });
+      }
+      else if(this.userRole.toUpperCase() === 'STUDENT') {
+        
+        return this.$store.state.Parent.parents.filter(p => {
+            return p.Students.some(s => s.classroomId == this.loggedInUser.ClassroomId)
+        })
       }
       else {
         return this.$store.getters['Parent/parents'];

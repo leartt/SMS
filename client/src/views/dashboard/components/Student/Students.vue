@@ -153,7 +153,6 @@ export default {
       else {
         return this.$store.state.Student.students;
       }
-      return this.$store.state.Student.students;
     }
   },
   mounted() {
