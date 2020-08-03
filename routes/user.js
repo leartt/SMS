@@ -27,6 +27,7 @@ router.get('/confirmation/:emailToken', async (req, res) => {
 
 router.get('/profile', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
+        console.log(req.body.user);
         let user;
         switch (req.user.role.toLowerCase()) {
             case 'admin':

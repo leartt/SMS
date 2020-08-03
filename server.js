@@ -55,6 +55,9 @@ app.use('/exam', examRoute);
 const examResultRoute = require('./routes/examResult');
 app.use('/result/exam', examResultRoute);
 
+const gradeRoute = require('./routes/grade');
+app.use('/grade', gradeRoute);
+
 const reportsRoute = require('./routes/reports');
 app.use('/reports', reportsRoute);
 

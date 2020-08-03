@@ -24,6 +24,10 @@
           <v-icon small class="mr-2" @click="openEdit(item)">mdi-pencil</v-icon>
           <v-icon small class="mr-2" @click="openDelete(item)">mdi-delete</v-icon>
         </template>
+
+        <template v-slot:item.lecturer="{item}">
+          <p>{{item.course.teacher.name}} {{item.course.teacher.surname}}</p>
+        </template>
       </v-data-table>
 
       <v-dialog
@@ -141,6 +145,7 @@ export default {
       headers: [
         { text: "Name", value: "name" },
         { text: "Course", value: "course.name" },
+        { text: "Lecturer", value: "lecturer" },
         { text: "Date of Exam", value: "date" },
         { text: "Time of Exam", value: "time" },
         { text: "Classroom", value: "classroom.name" },
@@ -167,7 +172,7 @@ export default {
     this.getDropdownData();
   },
   computed: {
-    ...mapGetters(["exams", "success_message", "error_message"]),
+    ...mapGetters(["success_message", "error_message"]),
     userRole() {
       return this.$store.getters["Auth/user"].User.role;
     },
@@ -176,6 +181,9 @@ export default {
     },
     courses() {
       this.$store.state.Course.courses;
+    },
+    exams() {
+      return this.$store.state.Exam.exams.reverse();
     }
   },
   methods: {

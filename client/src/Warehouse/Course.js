@@ -38,7 +38,7 @@ const actions = {
             return response;
 
         } catch (err) {
-            commit("SET_ERROR_MESSAGE", err.response.data.msg );
+            commit("SET_ERROR_MESSAGE", err.response.data.msg);
             setTimeout(() => {
                 commit("SET_ERROR_MESSAGE", null);
             }, 3000);
@@ -46,19 +46,49 @@ const actions = {
     },
 
     async getCourseById({ commit }, id) {
-        let response = await axios.get("http://localhost:5000/course/" + id);
-        if (response.data.success) {
-            commit("SET_COURSE");
+        try {
+            let response = await axios.get("http://localhost:5000/course/" + id);
+            if (response.data.success) {
+                commit("SET_COURSE");
+            }
+            return response;
         }
-        return response;
+        catch (err) { }
+    },
+
+    async updateCourse({ commit }, course) {
+        try {
+            const response = await axios.put(`http://localhost:5000/course/${course._id}`, course);
+            if (response.data.success) {
+                commit("SET_SUCCESS_MESSAGE", response.data.msg);
+                setTimeout(() => {
+                    commit("SET_SUCCESS_MESSAGE", null);
+                }, 3000);
+            }
+            return response;
+        }
+        catch (err) {
+            commit("SET_ERROR_MESSAGE", err.response.data.msg);
+            setTimeout(() => {
+                commit("SET_ERROR_MESSAGE", null);
+            }, 3000);
+        }
     },
 
     async deleteCourse({ commit }, id) {
-        const response = await axios.delete(`http://localhost:5000/course/${id}`);
-        if (response.data.success) {
-            commit("DELETE_COURSE", id);
+        try {
+            const response = await axios.delete(`http://localhost:5000/course/${id}`);
+            if (response.data.success) {
+                commit("DELETE_COURSE", id);
+            }
+            return response;
         }
-        return response;
+        catch (err) {
+            commit("SET_ERROR_MESSAGE", err.response.data.msg);
+            setTimeout(() => {
+                commit("SET_ERROR_MESSAGE", null);
+            }, 3000);
+        }
     }
 
 };

@@ -127,6 +127,19 @@ export default {
           },
         ]
       },
+
+      {
+        title: "Grades",
+        icon: "mdi-pen-minus",
+        to: "/grades/register"
+      },
+
+      {
+        title: "Courses",
+        icon: 'mdi-pen-minus',
+        to: "/courses"
+      },
+
       {
         title: "Reports",
         icon: "mdi-image-filter-none",

@@ -1,12 +1,14 @@
 <template>
   <v-container id="user-profile" fluid tag="section">
+
     <v-row justify="center">
+      
       <v-col cols="12" md="8">
         <base-material-card>
           <template v-slot:heading>
-            <div class="display-2 font-weight-light">My Profile</div>
+            <div class="display-2 font-weight-light">{{profileHeading}}</div>
 
-            <div class="subtitle-1 font-weight-light">Information about my account</div>
+            <div class="subtitle-1 font-weight-light">{{profileDescription}}</div>
           </template>
 
           <v-form>
@@ -57,7 +59,6 @@
               class="font-weight-light grey--text"
             >Role: {{user.User.role.toUpperCase()}}</p>
 
-            <v-btn color="success" rounded class="mr-0">Follow</v-btn>
           </v-card-text>
         </base-material-card>
       </v-col>
@@ -66,8 +67,10 @@
 </template>
 
 <script>
+import { ReactWrapper } from 'vuera'
 export default {
   name: "UserProfile",
+  props: ['profileHeading', 'profileDescription'],
   computed: {
     user() {
       return this.$store.state.Auth.user;

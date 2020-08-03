@@ -1,7 +1,14 @@
 <template>
   <v-container id="dashboard" fluid tag="section">
     <v-row>
-      <v-col cols="12" sm="6" lg="3">
+      
+      
+
+      <DisplayUsers :users="admins" icon="mdi-account-lock" color="info" title="Administrators" />
+      <DisplayUsers :users="teachers" icon="mdi-account-tie" color="warning" title="Teachers" />
+      <DisplayUsers :users="students" icon="mdi-account-multiple" color="primary" title="Students" />
+      <DisplayUsers :users="parents" icon="mdi-account-multiple" color="error" title="Parents" />
+      <!-- <v-col cols="12" sm="6" lg="6">
         <base-material-stats-card
           color="info"
           icon="mdi-account-lock"
@@ -12,7 +19,7 @@
         />
       </v-col>
 
-      <v-col cols="12" sm="6" lg="3">
+      <v-col cols="12" sm="6" lg="6">
         <base-material-stats-card
           color="info"
           icon="mdi-human-male-boy"
@@ -23,7 +30,7 @@
         />
       </v-col>
 
-      <v-col cols="12" sm="6" lg="3">
+      <v-col cols="12" sm="6" lg="6">
         <base-material-stats-card
           color="primary"
           icon="mdi-account-multiple"
@@ -34,7 +41,7 @@
         />
       </v-col>
 
-      <v-col cols="12" sm="6" lg="3">
+      <v-col cols="12" sm="6" lg="6">
         <base-material-stats-card
           color="success"
           icon="mdi-account-tie"
@@ -43,9 +50,33 @@
           sub-icon="mdi-align-vertical-bottom"
           sub-text="Total Users"
         />
+      </v-col>-->
+
+      <v-col cols="12">
+        <base-material-card color="warning lighten-1" class="px-2 py-3">
+          <template v-slot:heading>
+            <div class="display-3 font-weight-light text-center">Exams</div>
+            <div
+              class="subtitle-2 font-weight-light text-center"
+            >Here you can find date of each exam</div>
+          </template>
+          <div>
+            <v-date-picker
+              color="warning lighten-1"
+              v-model="date1"
+              :events="exams"
+              event-color="blue lighten-1"
+              full-width
+            ></v-date-picker>
+          </div>
+        </base-material-card>
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col cols="12">
+        <GoogleChart />
+      </v-col>
+
+      <!-- <v-col cols="12" md="6">
         <base-material-card color="warning" class="px-5 py-3">
           <template v-slot:heading>
             <div class="display-2 font-weight-light">Employees Stats</div>
@@ -100,15 +131,20 @@
             </v-tab-item>
           </v-tabs-items>
         </base-material-card>
-      </v-col>
+      </v-col>-->
     </v-row>
   </v-container>
 </template>
 
 <script>
+import GoogleChart from "@/views/dashboard/pages/GoogleChart";
+import DisplayUsers from "@/views/dashboard/DisplayUsers";
 export default {
   name: "DashboardDashboard",
-
+  components: {
+    DisplayUsers,
+    GoogleChart,
+  },
   data() {
     return {
       dailySalesChart: {
@@ -130,6 +166,7 @@ export default {
           }
         }
       },
+      date1: new Date().toISOString().substr(0, 10),
       dataCompletedTasksChart: {
         data: {
           labels: ["12am", "3pm", "6pm", "9pm", "12pm", "3am", "6am", "9am"],
@@ -334,10 +371,20 @@ export default {
     },
     teachers() {
       return this.$store.state.Teacher.teachers.length.toString();
+    },
+    exams() {
+      return this.$store.state.Exam.exams.map(exam => exam.date);
+    },
+    passedProps () {
+        return {
+          message: 'hi',
+          msg: 'hello'
+        }
     }
   },
   created() {
     this.getUsers();
+    this.getExams();
   },
 
   methods: {
@@ -349,6 +396,9 @@ export default {
       this.$store.dispatch("Parent/getParents");
       this.$store.dispatch("Student/getStudents");
       this.$store.dispatch("Teacher/getTeachers");
+    },
+    getExams() {
+      this.$store.dispatch("Exam/getExams");
     }
   }
 };

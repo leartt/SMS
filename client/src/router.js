@@ -30,7 +30,7 @@ export default new Router({
         {
           name: 'User Profile',
           path: 'pages/user',
-          component: () => import('@/views/dashboard/pages/UserProfile'),
+          component: () => import('@/views/dashboard/components/UserProfile/UserProfile'),
         },
 
         // Admin routes =>
@@ -124,6 +124,18 @@ export default new Router({
         },
         // End Feedback routes <==
 
+        // Course routes => 
+        {
+          name: 'Courses',
+          path: 'courses',
+          component: () => import('@/views/dashboard/components/Course/Course')
+        },
+        {
+          name: 'Add Course',
+          path: 'courses/create',
+          component: () => import('@/views/dashboard/components/Course/AddCourse')
+        },
+        // End Course routes <==
 
         // Exam routes =>
         {
@@ -135,14 +147,30 @@ export default new Router({
           name: 'Register Exam',
           path: 'exams/register',
           component: () => import('@/views/dashboard/components/Exam/RegisterExam'),
+          meta: { requiresAdmin: true }
         },
         {
           name: 'Exam Results',
           path: 'exams/result',
           component: () => import('@/views/dashboard/components/Exam/Results'),
         },
+        
 
         // End Exam routes <==
+        
+        // Grade routes
+        {
+          name: 'Add Grade',
+          path: 'grades/register',
+          component: () => import('@/views/dashboard/components/Grade/RegisterGrade')
+        },
+        {
+          name: 'Grade',
+          path: 'grades',
+          component: () => import('@/views/dashboard/components/Grade/Grades')
+        },
+
+        // End Grade routes <==
 
         {
           name: 'Reports',
@@ -150,6 +178,7 @@ export default new Router({
           component: () => import('@/views/dashboard/components/Report/Reports'),
           meta: { requiresAdmin: true }
         },
+
       ],
     },
   ],

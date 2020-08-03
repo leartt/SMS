@@ -14,6 +14,10 @@ const ExamResultSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    exam: {
+        type: Object,
+        required: true
     }
 });
 

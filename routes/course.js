@@ -9,6 +9,8 @@ router.get('/', CourseController.findCourses)
 
 router.get('/:id', CourseController.findOne)
 
+router.put('/:id', CourseController.update)
+
 router.delete('/:id', CourseController.delete)
 
 

@@ -2,6 +2,7 @@
 // const Teacher = require('../models').Teacher;
 // const Parent = require('../models').Parent;
 const ExamResult = require('../models/ExamResult');
+const Exam = require('../models/Exam');
 const upload = require('../fileUploader');
 
 // var PdfPrinter = require('pdfmake');
@@ -9,9 +10,12 @@ var fs = require('fs');
 
 exports.create = [upload.single('filePath'), async (req, res) => {
     try {
+        console.log(req.body.examId)
+        const exam = await Exam.findOne({_id: req.body.examId})
         const examResult = new ExamResult({
             name: req.body.name,
-            filePath: req.file.path
+            filePath: req.file.path,
+            exam: exam
         });
         const createdExamResult = await examResult.save();
         res.status(200).json({ createdExamResult, msg: 'Exam Result has been created successfully', success: true })

@@ -53,7 +53,9 @@
             <template v-slot:item="{ item, attrs, on }">
               <v-list-item v-bind="attrs" v-on="on">
                 <v-list-item-content>
-                  <v-list-item-title :id="attrs['aria-labelledby']" v-text="`${item.name}`"></v-list-item-title>
+                  <v-list-item-title :id="attrs['aria-labelledby']"
+                    v-text="`${item.name} - ${item.teacher.name} ${item.teacher.surname}`">
+                    </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
