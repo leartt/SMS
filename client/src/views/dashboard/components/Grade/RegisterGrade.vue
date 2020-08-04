@@ -101,7 +101,14 @@ export default {
       return this.$store.state.Student.students;
     },
     courses() {
-      return this.$store.state.Course.courses;
+      if(this.loggedInUser.User.role.toLowerCase() === 'admin') {
+        return this.$store.state.Course.courses;
+      }
+      else if(this.loggedInUser.User.role.toLowerCase() === 'teacher') {
+        return this.$store.state.Course.courses.filter(course => {
+          return course.teacher.id === this.loggedInUser.id
+      });
+      }
     }
   },
   methods: {

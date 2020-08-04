@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
 
 exports.findOne = async (req, res) => {
     try {
-        const exam = await Exam.findOne({ _id: req.params.id });
+        const exam = await Exam.findOne({ _id: req.params.id }).populate('course');
         res.status(200).json({ exam, success: true });
     }
     catch (err) {

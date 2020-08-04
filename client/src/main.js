@@ -62,12 +62,63 @@ router.beforeEach((to, from, next) => {
         })
         .catch(err => console.log(err))
     }
+    else if (to.matched.some(record => record.meta.requiresStudent)) {
+      store.dispatch('Auth/getProfile')
+        .then(res => {
+          if (res.data.success) {
+            if (res.data.user.User.role === 'student') {
+              next()
+            }
+            else {
+              next('/');
+            }
+          }
+          else {
+            console.log(res.data.msg)
+          }
+        })
+        .catch(err => console.log(err))
+    }
+    else if (to.matched.some(record => record.meta.requiresAdminOrTeacher)) {
+      store.dispatch('Auth/getProfile')
+        .then(res => {
+          if (res.data.success) {
+            if (res.data.user.User.role === 'admin' || res.data.user.User.role === 'teacher') {
+              next()
+            }
+            else {
+              next('/');
+            }
+          }
+          else {
+            console.log(res.data.msg)
+          }
+        })
+        .catch(err => console.log(err))
+    }
+    else if (to.matched.some(record => record.meta.requiresAdminOrParent)) {
+      store.dispatch('Auth/getProfile')
+        .then(res => {
+          if (res.data.success) {
+            if (res.data.user.User.role === 'admin' || res.data.user.User.role === 'parent') {
+              next()
+            }
+            else {
+              next('/');
+            }
+          }
+          else {
+            console.log(res.data.msg)
+          }
+        })
+        .catch(err => console.log(err))
+    }
     else {
       next();
     }
   }
   else if (to.matched.some(record => record.meta.requiresGuest)) {
-    if (store.getters['Auth/isLoggedIn'] && store.getters['Auth/user'].id) {
+    if (store.getters['Auth/isLoggedIn']) {
       next({ name: 'User Profile' });
     }
     else {

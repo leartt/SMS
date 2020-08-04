@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
                 email: user.email,
                 role: user.role
             }
-            jwt.sign(payload, key, {
+            jwt.sign(payload, key, { 
                 expiresIn: "10h"
             }, (err, token) => {
                 res.status(200).json({

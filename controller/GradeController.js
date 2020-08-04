@@ -24,7 +24,7 @@ exports.create = async (req, res) => {
 
 exports.findOne = async (req, res) => {
     try {
-        const grade = await Grade.findOne({ _id: req.params.id });
+        const grade = await Grade.findOne({ _id: req.params.id }).populate('course');
         res.status(200).json({ grade, success: true });
     }
     catch (err) {

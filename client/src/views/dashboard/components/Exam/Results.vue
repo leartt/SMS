@@ -42,7 +42,7 @@
                 <v-list-item-content>
                   <v-list-item-title
                     :id="attrs['aria-labelledby']"
-                    v-text="`${item.name} - ${item.classroom.name}`"
+                    v-text='`${item.name}/${item.classroom.name} - "${item.course.teacher.name} ${item.course.teacher.surname}"`'
                   ></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -79,7 +79,7 @@
               </v-list-item-action>
 
               <v-list-item-content>
-                <v-list-item-title style="overflow-x: auto">
+                <v-list-item-title class="exam-results-title" style="overflow-x: auto;">
                   <a
                     class="exam-results-links"
                     :href="`http://localhost:5000/${item.filePath}`"
@@ -90,6 +90,8 @@
                       {{ item.date.split("T")[1].split(".")[0] }}
                     </h5>
                   </a>
+                  <p>Classroom: {{ item.exam.classroom.name }}</p>
+                  <p>Teacher: {{ item.exam.course.teacher.name }} {{ item.exam.course.teacher.surname }}</p>
                 </v-list-item-title>
               </v-list-item-content>
 
@@ -140,7 +142,14 @@ export default {
       return this.$store.getters["Auth/user"];
     },
     exams() {
-      return this.$store.state.Exam.exams;
+      if(this.userRole.toUpperCase() === 'ADMIN') {
+        return this.$store.state.Exam.exams;
+      }
+      else if(this.userRole.toUpperCase() === 'TEACHER') {
+        return this.$store.state.Exam.exams.filter(ex => {
+            return ex.course.teacher.id === this.loggedInUser.id;
+        })
+      }
     },
     examResults: {
       get() {
@@ -248,5 +257,14 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.exam-results-title {
+  display: flex;
+  flex-direction: column;
+}
+.exam-results-title p {
+  margin: 0;
+  padding-left: 10px;
 }
 </style>

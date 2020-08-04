@@ -5,6 +5,7 @@ const Report = require('../models/Report');
 
 var PdfPrinter = require('pdfmake');
 var fs = require('fs');
+const { insertMany } = require('../models/Report');
 
 exports.create = async (req, res) => {
     try {

@@ -7,6 +7,7 @@ const upload = require('../fileUploader');
 
 // var PdfPrinter = require('pdfmake');
 var fs = require('fs');
+const { model } = require('../models/ExamResult');
 
 exports.create = [upload.single('filePath'), async (req, res) => {
     try {
@@ -27,7 +28,7 @@ exports.create = [upload.single('filePath'), async (req, res) => {
 
 exports.findOne = async (req, res) => {
     try {
-        const examResult = await ExamResult.findOne({ _id: req.params.id });
+        const examResult = await ExamResult.findOne({ _id: req.params.id }).populate('exam');
         res.status(200).json({ examResult, success: true });
     }
     catch (err) {
@@ -38,7 +39,13 @@ exports.findOne = async (req, res) => {
 
 exports.findExamsResult = async (req, res) => {
     try {
-        const examsResult = await ExamResult.find();
+        const examsResult = await ExamResult.find().populate({
+            path: 'exam',
+            populate: {
+                path: 'course'
+            }
+        });
+        console.log(examsResult);
         res.status(200).json({ examsResult, success: true });
     }
     catch (err) {

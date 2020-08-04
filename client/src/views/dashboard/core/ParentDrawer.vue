@@ -19,10 +19,10 @@
 
     <v-list dense nav>
       <v-list-item>
-        <v-list-item-avatar class="align-self-center" color="white" contain>
+        <v-list-item-avatar class="align-self-center" color="gray" contain>
           <v-img
-            src="https://demos.creative-tim.com/vuetify-material-dashboard/favicon.ico"
-            max-height="30"
+            :src="require('@/assets/school.png')"
+            max-height="50"
           />
         </v-list-item-avatar>
 

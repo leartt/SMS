@@ -16,8 +16,8 @@ const ExamResultSchema = new Schema({
         default: Date.now
     },
     exam: {
-        type: Object,
-        required: true
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Exams'
     }
 });
 

@@ -133,7 +133,8 @@ export default new Router({
         {
           name: 'Add Course',
           path: 'courses/create',
-          component: () => import('@/views/dashboard/components/Course/AddCourse')
+          component: () => import('@/views/dashboard/components/Course/AddCourse'),
+          meta: { requiresAdmin: true }
         },
         // End Course routes <==
 
@@ -147,7 +148,7 @@ export default new Router({
           name: 'Register Exam',
           path: 'exams/register',
           component: () => import('@/views/dashboard/components/Exam/RegisterExam'),
-          meta: { requiresAdmin: true }
+          meta: { requiresAdminOrTeacher: true }
         },
         {
           name: 'Exam Results',
@@ -162,12 +163,14 @@ export default new Router({
         {
           name: 'Add Grade',
           path: 'grades/register',
-          component: () => import('@/views/dashboard/components/Grade/RegisterGrade')
+          component: () => import('@/views/dashboard/components/Grade/RegisterGrade'),
+          meta: { requiresAdminOrTeacher: true }
         },
         {
           name: 'Grade',
           path: 'grades',
-          component: () => import('@/views/dashboard/components/Grade/Grades')
+          component: () => import('@/views/dashboard/components/Grade/Grades'),
+          meta: { requiresStudent: true }
         },
 
         // End Grade routes <==
