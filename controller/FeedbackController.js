@@ -7,7 +7,7 @@ var PdfPrinter = require('pdfmake');
 var fs = require('fs');
 const { insertMany } = require('../models/Report');
 
-exports.create = async (req, res) => {
+exports.create = async (req, res,) => {
     try {
         const createdFeedback = await Feedback.create({
             description: req.body.description,
@@ -18,7 +18,8 @@ exports.create = async (req, res) => {
     } catch (err) {
         res.status(400).json({ msg: err, success: false })
     }
-};
+}
+
 
 
 exports.findOne = async (req, res) => {
@@ -143,7 +144,7 @@ exports.generateReport = async (req, res) => {
             filePath: pdfDoc._readableState.pipes.path,
             date: new Date().toUTCString()
         })
-        
+
         let generatedReport = await report.save();
         res.status(200).json({ generatedReport, msg: 'Reports generated', success: true });
     }

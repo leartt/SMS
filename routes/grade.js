@@ -5,6 +5,8 @@ const GradeController = require('../controller/GradeController');
 
 router.post('/', GradeController.create)
 
+router.post('/transcript', GradeController.generateTranscript)
+
 router.get('/', GradeController.findGrades)
 
 router.get('/:id', GradeController.findOne)

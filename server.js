@@ -47,19 +47,19 @@ const classroomRoute = require('./routes/classroom');
 app.use('/classroom', auth, classroomRoute);
 
 const courseRoute = require('./routes/course');
-app.use('/course', courseRoute);
+app.use('/course', auth, courseRoute);
 
 const examRoute = require('./routes/exam');
-app.use('/exam', examRoute);
+app.use('/exam', auth, examRoute);
 
 const examResultRoute = require('./routes/examResult');
-app.use('/result/exam', examResultRoute);
+app.use('/result/exam', auth, examResultRoute);
 
 const gradeRoute = require('./routes/grade');
 app.use('/grade', gradeRoute);
 
 const reportsRoute = require('./routes/reports');
-app.use('/reports', reportsRoute);
+app.use('/reports', auth, reportsRoute);
 
 
 const PORT = process.env.PORT || 5000;

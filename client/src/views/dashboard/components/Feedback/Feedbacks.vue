@@ -2,7 +2,10 @@
   <v-container>
     <v-alert v-if="feedbackSuccess" color="green">{{feedbackSuccess}}</v-alert>
 
-    <router-link v-if="userRole === 'parent'" :to="{ name: 'Create Feedback' }">Create a new Feedback</router-link>
+    <router-link
+      v-if="userRole === 'parent'"
+      :to="{ name: 'Create Feedback' }"
+    >Create a new Feedback</router-link>
 
     <v-card>
       <v-card-title>
@@ -68,21 +71,21 @@ export default {
         { text: "Created By", value: "parent" },
         { text: "Created For", value: "teacher" },
         { text: "Date Created", value: "dateCreated" },
-        { text: "Actions", value: "actions", sortable: false }
+        { text: "Actions", value: "actions", sortable: false },
       ],
       deleteDialog: false,
-      deletedFeedback: null
+      deletedFeedback: null,
     };
   },
   computed: {
     ...mapGetters(["feedbacks"]),
     feedbacks() {
       if (this.userRole === "parent") {
-        return this.$store.state.Feedback.feedbacks.filter(f => {
+        return this.$store.state.Feedback.feedbacks.filter((f) => {
           return f.parentId == this.loggedInUser.id;
         });
       } else if (this.userRole === "teacher") {
-        return this.$store.state.Feedback.feedbacks.filter(f => {
+        return this.$store.state.Feedback.feedbacks.filter((f) => {
           return f.teacherId == this.loggedInUser.id;
         });
       } else {
@@ -94,7 +97,7 @@ export default {
     },
     loggedInUser() {
       return this.$store.getters["Auth/user"];
-    }
+    },
   },
   methods: {
     ...mapActions(["getFeedbacks", "deleteFeedback"]),
@@ -103,7 +106,7 @@ export default {
 
       axios
         .post("http://localhost:5000/feedback/report", feedbacks)
-        .then(res => {
+        .then((res) => {
           if (res.data.success) {
             this.feedbackSuccess = "Report has been generated successfully.";
             setTimeout(() => {
@@ -111,7 +114,7 @@ export default {
             }, 3000);
           }
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     },
     openDelete(item) {
       this.deletedFeedback = item;
@@ -120,11 +123,11 @@ export default {
     feedbackDelete(feedback) {
       this.deleteDialog = false;
       this.deleteFeedback(feedback.id);
-    }
+    },
   },
   created() {
     this.getFeedbacks();
-  }
+  },
 };
 </script>
 

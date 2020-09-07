@@ -1,9 +1,6 @@
 const Teacher = require('../models').Teacher;
 const Course = require('../models/Course');
 
-// var PdfPrinter = require('pdfmake');
-// var fs = require('fs');
-
 exports.create = async (req, res) => {
     try {
         const teacher = await Teacher.findOne({ where: { id: req.body.teacher } });

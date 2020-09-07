@@ -114,7 +114,7 @@ exports.findOne = async (req, res) => {
 
 exports.findAdmins = async (req, res) => {
     try {
-        // checkPermission(req.user.role, 'ADMIN');
+        checkPermission(req.user.role, 'ADMIN');
         const admins = await Admin.findAll({
             include: [
                 {

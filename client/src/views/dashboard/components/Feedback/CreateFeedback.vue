@@ -66,7 +66,6 @@ export default {
       description: "",
       teacherId: 0,
       photo_path: null,
-      teachersList: null,
 
       descriptionRules: [
         v => !!v || "Description is required",

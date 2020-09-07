@@ -14,7 +14,7 @@
     <v-card>
       <v-card-title class="my-3">
         <v-text-field v-model="search" label="Search" single-line hide-details></v-text-field>
-        <router-link v-if="userRole === 'admin'" :to="{ name: 'Register Exam'}">
+        <router-link v-if="userRole === 'admin' || userRole === 'teacher'" :to="{ name: 'Register Exam'}">
           <v-btn color="green" class="mx-2">Register New Exam</v-btn>
         </router-link>
       </v-card-title>
