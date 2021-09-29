@@ -1,5 +1,7 @@
 # school-management-system
 
+LIVE URL: https://codeks-school.netlify.app/
+
 ![Capture](https://user-images.githubusercontent.com/35147234/92420714-489df300-f175-11ea-8122-58c808c48604.PNG)
 ![dashboard](https://user-images.githubusercontent.com/35147234/92420715-49cf2000-f175-11ea-857b-03261e398ed5.PNG)
 ![exams](https://user-images.githubusercontent.com/35147234/92420716-4a67b680-f175-11ea-8f2f-b3006d18caef.PNG)
